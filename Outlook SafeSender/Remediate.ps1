@@ -6,7 +6,7 @@
     To update the list in the future, simply modify the email addresses in the 
     "CONFIGURATION SECTION" below.
 .NOTES
-    Version:        1.0
+    Version:        1.1
     For use with:   Microsoft Intune Remediation Scripts
 #>
 
@@ -31,20 +31,26 @@ try {
 
     # Check if the registry path exists, create it if it doesn't
     if (-not (Test-Path $regPath)) {
+        Write-Output "Registry path does not exist. Creating it now..."
         New-Item -Path $regPath -Force | Out-Null
-        Write-Output "Created registry path: $regPath"
+        Write-Output "Registry path created: $regPath"
     }
 
-    # Update the registry with the safe senders list (overwrite existing)
-    New-ItemProperty -Path $regPath -Name "Safe Senders" -Value $($safeSenders -join ";") -PropertyType String -Force
-    
+    # Overwrite the Safe Senders list with the specified email addresses
+    $safeSendersValue = $safeSenders -join ";"
+    New-ItemProperty -Path $regPath -Name "Safe Senders" -Value $safeSendersValue -PropertyType String -Force
+    Write-Output "Safe Senders list updated: $safeSendersValue"
+
     # Set JunkMailImportLists to 1 to ensure the list is imported
     Set-ItemProperty -Path $regPath -Name "JunkMailImportLists" -Value 1 -Type DWord
+    Write-Output "JunkMailImportLists set to 1 to ensure Safe Senders list is imported."
 
-    Write-Output "Successfully updated Safe Senders list for Outlook 2016"
-    exit 0 # Success
+    # Success
+    Write-Output "Remediation completed successfully."
+    exit 0
 }
 catch {
-    Write-Error "Error updating Safe Senders list: $_"
-    exit 1 # Failure
+    # Log the error and fail the script
+    Write-Error "Error during remediation: $_"
+    exit 1
 }
