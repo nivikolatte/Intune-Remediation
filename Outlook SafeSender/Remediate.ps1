@@ -2,8 +2,8 @@
 .SYNOPSIS
     Creates a Safe Senders text file in C:\Temp and configures Outlook to use it.
 .DESCRIPTION
-    This script creates a text file with Safe Sender email addresses in C:\Temp and configures
-    Outlook to import Safe Senders directly from this file.
+    This script creates a text file with Safe Sender email addresses in C:\Temp using Unicode encoding
+    and configures Outlook to import Safe Senders directly from this file.
 .NOTES
     Version:        1.0
     For use with:   Microsoft Intune Remediation Scripts
@@ -33,8 +33,8 @@ try {
         New-Item -Path "C:\Temp" -ItemType Directory -Force | Out-Null
     }
     
-    # Create or overwrite the Safe Senders text file
-    $emailAddresses | Out-File -FilePath $safeSendersFilePath -Encoding utf8 -Force
+    # Create or overwrite the Safe Senders text file with Unicode encoding
+    $emailAddresses | Out-File -FilePath $safeSendersFilePath -Encoding Unicode -Force
     
     # Define the registry path for Outlook
     $regPath = "HKCU:\Software\Microsoft\Office\16.0\Outlook\Options\Mail"
